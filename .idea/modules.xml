@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/CodeTemplates.iml" filepath="$PROJECT_DIR$/CodeTemplates.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RemoteCodeTemplates.iml" filepath="$PROJECT_DIR$/RemoteCodeTemplates.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mytemplatelibrary/mytemplatelibrary.iml" filepath="$PROJECT_DIR$/mytemplatelibrary/mytemplatelibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mytemplates/mytemplates.iml" filepath="$PROJECT_DIR$/mytemplates/mytemplates.iml" />
+    </modules>
+  </component>
+</project>
+
