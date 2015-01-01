@@ -112,9 +112,9 @@ public class MySensorData extends Thread implements SensorEventListener {
                     calibrationFlag = false;
                 }
 
+                // ---- CALCULATION ----
                 // Stop calculation if the device isn't in correct calibration area
                 if(calculationFlag) {
-                    // ---- CALCULATION ----
                     double[] Ry = {-Math.sin(alpha), 0, Math.cos(alpha)};
 
                     for (int i = 0; i < sensorTempData.length; i++) {
