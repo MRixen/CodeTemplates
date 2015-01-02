@@ -7,16 +7,18 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Toast;
 
-import rixen.manleo.dev.mytemplatelibrary.MySensorData;
+import rixen.manleo.dev.mytemplatelibrary.Sensor.MySensorData;
+import rixen.manleo.dev.mytemplatelibrary.Sensor.MySensorEventListener;
 import rixen.manleo.dev.mytemplatelibrary.MySurfaceView;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements MySensorEventListener {
 
     private MySurfaceView mySurfaceView;
     private MySensorData mySensorData;
     private SurfaceView surface;
     private int sDelay, sType;
+    private MySensorEventListener mySensorEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +32,9 @@ public class MainActivity extends Activity {
         // type-> Accelerometer: 1
         // delay-> Fastest: 0, Game: 1, UI: 2, Normal: 3
         sType = 1; sDelay = 3;
+        mySensorEventListener = this;
         // New instance of sensor data class
-        mySensorData = new MySensorData(this);
+        mySensorData = new MySensorData(this, mySensorEventListener);
         // ------------------
 
         // ------------------
@@ -54,7 +57,7 @@ public class MainActivity extends Activity {
                 bundle.putIntArray("transformation", transformation);
                 msg.setData(bundle);
                 // Send message to sensor thread to calibrate sensor
-                if(mySensorData.handler != null) mySensorData.handler.sendMessage(msg);
+                if(mySensorData.inMsgHandler != null) mySensorData.inMsgHandler.sendMessage(msg);
                 else Toast.makeText(this, "Handler is null", Toast.LENGTH_SHORT).show();
                 break;
         }
@@ -95,5 +98,10 @@ public class MainActivity extends Activity {
         // ------------------
         mySurfaceView.stopSurfaceView();
         // ------------------
+    }
+
+    @Override
+    public void onNewSensorEvent() {
+
     }
 }

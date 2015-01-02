@@ -1,4 +1,4 @@
-package rixen.manleo.dev.mytemplatelibrary;
+package rixen.manleo.dev.mytemplatelibrary.Sensor;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,34 +16,31 @@ import android.widget.Toast;
 /**
  * Created by dev on 1/1/15.
  */
-public class MySensorData extends Thread implements SensorEventListener {
-
-    private final Activity activity;
-    private final Context context;
-    public Handler handler;
-    private SensorManager sManager;
-    private Handler threadHandler;
-    private Thread sThread;
-    private int sDelay, sType;
-    private int[] sensorTransformation;
-    private final double g = 10;
-    private float gz;
-    private double alpha;
+public class MySensorData extends Thread implements SensorEventListener, MySensorEventListener{
 
     public final int ORIGINAL = 0;
     public final int NO_DIRECTION = 1;
     public final int POS_DIRECTION = 2;
     public final int NEG_DIRECTION = 3;
 
-    private boolean calibrationFlag;
-    private boolean calculationFlag;
+    private final Activity activity;
+    private final Context context;
+    private final MySensorEventListener mySensorEventListener;
+    public Handler inMsgHandler, threadHandler;
+    private SensorManager sManager;
+    private Thread sThread;
+    private int sDelay, sType;
+    private int[] sTransform;
+    private final double g = 10;
+    private float gz;
+    private double alpha;
+    private boolean caliFlag, calcFlag;
 
-    public MySensorData(Context context){
+    public MySensorData(Context context, MySensorEventListener mySensorEventListener){
         this.context = context;
+        this.mySensorEventListener = mySensorEventListener;
         activity = new Activity();
     }
-
-
 
     public void run() {
         // Get sensor object
@@ -57,13 +54,13 @@ public class MySensorData extends Thread implements SensorEventListener {
             // Handler to cancel the message loop
             threadHandler = new Handler();
 
-            // handler to receive message from other thread
-            handler = new Handler() {
+            // inMsgHandler to receive message from other thread
+            inMsgHandler = new Handler() {
                 public void handleMessage(Message msg) {
                     Bundle data = msg.getData();
                     if(data != null){
                         if(data.containsKey("transformation")){
-                            sensorTransformation = data.getIntArray("transformation");
+                            sTransform = data.getIntArray("transformation");
                             unregisterSensorListener();
                         }
                     }
@@ -81,8 +78,8 @@ public class MySensorData extends Thread implements SensorEventListener {
     private void unregisterSensorListener() {
         sManager.unregisterListener(MySensorData.this);
         // Set flags to provide calibration and calculation
-        calibrationFlag = true;
-        calculationFlag = true;
+        caliFlag = true;
+        calcFlag = true;
     }
 
     @Override
@@ -92,29 +89,29 @@ public class MySensorData extends Thread implements SensorEventListener {
             float[] sensorData = new float[3];
 
             // Get original sensor values
-            if(sensorTransformation[0] == ORIGINAL){
+            if(sTransform[0] == ORIGINAL){
                 for(int i = 0; i < sensorTempData.length; i++){
                     sensorData[i] = sensorTempData[i];
                 }
             }
             // Get sensor values for landscape mode
-            if(sensorTransformation[0] == POS_DIRECTION){
-                if(calibrationFlag){
+            if(sTransform[0] == POS_DIRECTION){
+                if(caliFlag){
                     // TODO
                 }
             }
             // ---- CALIBRATION ----
             // Get sensor values for reverse landscape mode
-            if(sensorTransformation[0] == NEG_DIRECTION){
-                if(calibrationFlag){
+            if(sTransform[0] == NEG_DIRECTION){
+                if(caliFlag){
                     gz = sensorTempData[2];
                     alpha = -(Math.PI / 2) + Math.acos(gz / g);
-                    calibrationFlag = false;
+                    caliFlag = false;
                 }
 
                 // ---- CALCULATION ----
                 // Stop calculation if the device isn't in correct calibration area
-                if(calculationFlag) {
+                if(calcFlag) {
                     double[] Ry = {-Math.sin(alpha), 0, Math.cos(alpha)};
 
                     for (int i = 0; i < sensorTempData.length; i++) {
@@ -125,15 +122,14 @@ public class MySensorData extends Thread implements SensorEventListener {
                 }
 
                 // ---- VALIDATION ----
-                // Check sensorTransformation area
+                // Check sTransform area
                 if (Math.abs(gz) > g || ( sensorData[0] > 0 || sensorData[2] < 0 )){
                     toastInMainThread("Not in correct calibration area");
-                    calculationFlag = false;
+                    calcFlag = false;
                 }
                 else{
                     toastInMainThread("Calibration success");
-
-                    // TODO Send sensor data to other (callback method?)
+                    mySensorEventListener.onNewSensorEvent();
                 }
 
             }
@@ -172,6 +168,11 @@ public class MySensorData extends Thread implements SensorEventListener {
         }catch(NullPointerException e){
             Log.d("MySensorData->stopSensorData:", String.valueOf(e));
         }
+
+    }
+
+    @Override
+    public void onNewSensorEvent() {
 
     }
 }
