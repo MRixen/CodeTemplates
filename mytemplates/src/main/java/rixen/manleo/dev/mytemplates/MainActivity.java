@@ -7,6 +7,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Toast;
 
+import rixen.manleo.dev.mytemplatelibrary.Data;
+import rixen.manleo.dev.mytemplatelibrary.Motor.Movement;
 import rixen.manleo.dev.mytemplatelibrary.Sensor.MySensorData;
 import rixen.manleo.dev.mytemplatelibrary.Sensor.MySensorEventListener;
 import rixen.manleo.dev.mytemplatelibrary.MySurfaceView;
@@ -16,9 +18,11 @@ public class MainActivity extends Activity implements MySensorEventListener {
 
     private MySurfaceView mySurfaceView;
     private MySensorData mySensorData;
+    private Movement movement;
     private SurfaceView surface;
     private int sDelay, sType;
     private MySensorEventListener mySensorEventListener;
+    private int speed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,14 @@ public class MainActivity extends Activity implements MySensorEventListener {
         surface = (SurfaceView) findViewById(R.id.surface_view);
         // New instance of surface view class
         mySurfaceView = new MySurfaceView(this);
+        // ------------------
+
+        // ------------------
+        // ----- MOTOR ----
+        // ------------------
+        // New instance of movement class
+        movement = new Movement();
+        movement.moveStepper(Data.Type.go, speed, Data.StepResolution.half);
         // ------------------
     }
 
