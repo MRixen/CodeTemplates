@@ -13,7 +13,14 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:onClick="onClick"
-    android:layout_centerHorizontal="true"
-    android:text="Calibrate"/>
+    android:text="Calibrate Sensor"/>
+
+    <Button
+        android:id="@+id/button_startMotor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onClick"
+        android:layout_toRightOf="@id/button_calibration"
+        android:text="Start Motor"/>
 
 </RelativeLayout>

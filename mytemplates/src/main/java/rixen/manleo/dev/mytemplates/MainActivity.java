@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import rixen.manleo.dev.mytemplatelibrary.Data;
-import rixen.manleo.dev.mytemplatelibrary.Motor.Movement;
+import rixen.manleo.dev.mytemplatelibrary.Utilities.Movement;
 import rixen.manleo.dev.mytemplatelibrary.Sensor.MySensorData;
 import rixen.manleo.dev.mytemplatelibrary.Sensor.MySensorEventListener;
 import rixen.manleo.dev.mytemplatelibrary.MySurfaceView;
@@ -54,8 +54,7 @@ public class MainActivity extends Activity implements MySensorEventListener {
         // ----- MOTOR ----
         // ------------------
         // New instance of movement class
-        movement = new Movement();
-        movement.moveStepper(Data.Type.go, speed, Data.StepResolution.half);
+        movement = new Movement(this); // Start communication thread
         // ------------------
     }
 
@@ -71,6 +70,9 @@ public class MainActivity extends Activity implements MySensorEventListener {
                 // Send message to sensor thread to calibrate sensor
                 if(mySensorData.inMsgHandler != null) mySensorData.inMsgHandler.sendMessage(msg);
                 else Toast.makeText(this, "Handler is null", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.button_startMotor:
+                movement.moveStepper(Data.Type.go, speed, Data.StepResolution.half);
                 break;
         }
     }
